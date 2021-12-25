@@ -71,6 +71,7 @@ def removeDrawnNumbFromBoard(dict_to_check,drawn_number):
 ###else, return the winning board for the ROW
 def checkIfWinner_Row(dict_to_check,ig_list):
     winner_found = 0
+    #winner_list = []
     #print(dict_to_check)
     for i in range(1,len(dict_to_check.keys()) + 1):
         #print("number:" + str(i))
@@ -222,4 +223,6 @@ print(calculateScore(last_remaining_win_Board,last_winning_number))
 ####PART 2:
 #problems currently - it appears that it continues removing values from already won boards
 ###possibly that multiple boards needs to be ignored per round, if multiple boards wins.
-###possibility - make it possible to add multiple wins per round - return a list instead
+###possibility - make it possible to add multiple wins per round - return a list instead?
+
+####need to heavily rewrite my game-logic, so that it can handle multiple wins per round - otherwise it will keep writing X to boards that have already won
