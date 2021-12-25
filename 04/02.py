@@ -3,7 +3,9 @@ import copy
 
 drawing_numbers = []
 input_list = []
-with open("input_01.txt", "r") as f:
+#remaining_Board_List = []
+
+with open("input_02.txt", "r") as f:
     input_list = f.readlines()
     
 ##removes any whitespace from input array
@@ -25,7 +27,7 @@ def generateBoards(list_to_check):
             newline_counter += 1
             if(newline_counter > 1):
                 break
-            print(newline_counter)
+            #print(newline_counter)
             increment_counter += 1
         elif(newline_counter == 1):
             #i = 5
@@ -43,6 +45,7 @@ def generateBoards(list_to_check):
             #print(local_dict)
             return_dict[board_number] = local_dict
             board_number += 1
+    #print("total boards:" + str(board_number))
     return return_dict
 
 ##returns true, or false if ANY matches are found
@@ -68,9 +71,9 @@ def removeDrawnNumbFromBoard(dict_to_check,drawn_number):
 ###else, return the winning board for the ROW
 def checkIfWinner_Row(dict_to_check):
     winner_found = 0
-    print(dict_to_check)
+    #print(dict_to_check)
     for i in range(1,len(dict_to_check.keys()) + 1):
-        print("number:" + str(i))
+        #print("number:" + str(i))
         for y in range(0,len(dict_to_check[i].keys())):
             for x in range(0,5):
                 if(dict_to_check[i][y][x] == "X"):
@@ -140,18 +143,48 @@ print(drawing_numbers)
 
 ###generate our boards from the input data
 generated_board_dict = generateBoards(input_list)
-#backup_board_dict = generated_board_dict
+
+#number_of_boards = len(generated_board_dict.keys())
+#print(number_of_boards)
+#for i in range(1,int(number_of_boards+1)):
+ #   remaining_Board_List.append(str(i))
+#print(remaining_Board_List)
+#print("length:" + str(remaining_Board_List))
 ##make a deep copy of our original board
 backup_board_dict = copy.deepcopy(generated_board_dict)
 
-winner_not_yet_found = True
+#winner_not_yet_found = True
 
+last_remaining_win_board_ID = 0
+last_remaining_win_Board = {}
+last_winning_number = 0
 
 ###Go through our draw numbers, until we find a winner
 for number in draw_list:
+   
     ##if match found, check if winner generated
     match_Found = removeDrawnNumbFromBoard(generated_board_dict,number)
     if(match_Found):
+        winner_found_ROW_BoardID = checkIfWinner_Row(generated_board_dict)
+        if(winner_found_ROW_BoardID != 0):
+            print("Winner found:" + str(winner_found_ROW_BoardID))
+            print(backup_board_dict[winner_found_ROW_BoardID])
+            last_remaining_win_board_ID = winner_found_ROW_BoardID
+            last_remaining_win_Board = copy.deepcopy(generated_board_dict[winner_found_ROW_BoardID])
+            last_winning_number = number
+            #print("Final Score:" + str(calculateScore(generated_board_dict[winner_found_ROW_BoardID],number)))
+
+        winner_found_COLUMN_BoardID = checkIfWinner_Column(generated_board_dict)
+        if(winner_found_COLUMN_BoardID != 0):
+            print("winner found:" + str(winner_found_COLUMN_BoardID))
+            print(backup_board_dict[winner_found_COLUMN_BoardID])
+            last_remaining_win_board_ID = winner_found_COLUMN_BoardID
+            last_remaining_win_Board = copy.deepcopy(generated_board_dict[winner_found_COLUMN_BoardID])
+            last_winning_number = number
+            #print("Final Score:" + str(calculateScore(generated_board_dict[winner_found_COLUMN_BoardID],number)))
+        
+        
+        """
         winner_found_ROW_BoardID = checkIfWinner_Row(generated_board_dict)
         if(winner_found_ROW_BoardID == 0):
             print("no winner found for rows")
@@ -160,7 +193,8 @@ for number in draw_list:
             print(backup_board_dict[winner_found_ROW_BoardID])
             print("Final Score:" + str(calculateScore(generated_board_dict[winner_found_ROW_BoardID],number)))
             break
-        
+        """
+        """
         winner_found_COLUMN_BoardID = checkIfWinner_Column(generated_board_dict)
         if(winner_found_COLUMN_BoardID == 0):
             print("no winner found for columns")
@@ -169,7 +203,12 @@ for number in draw_list:
             print(backup_board_dict[winner_found_COLUMN_BoardID])
             print("Final Score:" + str(calculateScore(generated_board_dict[winner_found_COLUMN_BoardID],number)))
             break
+        """
 
+print("Last remaining win board ID:" + str(last_remaining_win_board_ID))
+print("Last remaining win board:")
+print(last_remaining_win_Board)
+print("Last remaining win number:" + str(last_winning_number))
 
 ###TODO:
 # read file, split into functional bits.
@@ -185,3 +224,12 @@ for number in draw_list:
 #########call func2: check if any winners. Split into row/column?
 ##################PROBLEM - CAN MULTIPLE BOARDS WIN AT THE SAME TIME, AND DO WE CHECK FOR IT?
 #############if winner found, return and call "score-func".
+#########################################################################
+
+####PART 2:
+###ADD OPTION TO SEE WHICH BOARD WILL BE THE LAST TO WIN
+#####ONCE WE HAVE THE BOARD, CALCULATE THE WINNING SCORE IF WE PICK THAT ONE.
+##have a var set to the board ID of the last win on the board + the board at the time that specific board hits BINGO
+######once we loop through all numbers in the list, use the above vars to calculate the winnings
+#########add a ignore list, for boards that have already won something - so we do not go through those boards again....
+
