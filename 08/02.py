@@ -1,3 +1,6 @@
+####Stupid Version - only works for example 1- Fails on the rest as in some examples there will be
+###missing digits, and as such calculations wont work.
+
 fileRead_list = []
 input_list = []
 output_list = []
@@ -18,7 +21,8 @@ for item in fileRead_list:
     input_list.append(temp_input)
     output_list.append(temp_output)
 
-##takes unsorted word - returns word sorted alphabetically
+##Input unsorted word - 
+# Returns - word sorted alphabetically
 def sort_single_word(unsorted_word):
     list_word = list(unsorted_word)
     list_word.sort()
@@ -40,7 +44,7 @@ def match_subword_in_word_LBL(subword,word):
     else:
         return False
 ##fetches all strings matching length X
-####sorted
+####Returns - sorted list
 def fetch_strings_of_length(single_line,string_length):
     unsorted_list_of_words = []
     sorted_list_of_words = []
@@ -62,6 +66,15 @@ def get_missing_letter_in_subword(subword,word):
     if(match_found == False):
         return None
 
+def get_matching_number(item_to_check,calculated_numbers):
+    counter = 0
+    for item in calculated_numbers:
+        if item_to_check in item and len(item_to_check) == len(item):
+            print("Found match for:" + item_to_check + " in===>" + item)
+            return counter
+        else:
+            counter += 1
+    return None  
 ##############################
 #####Calculate the given values - that cannot be anything else.
 ##Always return Sorted words
@@ -269,10 +282,30 @@ def calculate_output_values(single_line,solved_combinations):
     print(output_values)
     output_list = output_values.split(" ")
     print(output_list)
-    
+
+    result_list = []
+    for item in output_list:
+        return_result = get_matching_number(sort_single_word(item),solved_combinations)
+        if(return_result):
+            result_list.append(str(return_result))
+        #temp_item = sort_single_word(item)
+        #for check_value in solved_combinations:
+         #   if temp_item in check_value:
+          #      print("Found match===>" + item)
+    return result_list
+
+total_output_result = 0
 for item in fileRead_list:
     #calculate_nr_one(item)
     combinations = calculate_number_values(item)
-    calculate_output_values(item,combinations)
+    result_list = calculate_output_values(item,combinations)
+    full_result = ""
+    for result in result_list:
+        full_result += result
+    #print(full_result)
     #print(combinations)
+    #print("results")
+    #print(result_list)
+    total_output_result += int(full_result)
 
+print(total_output_result)
