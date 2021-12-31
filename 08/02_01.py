@@ -48,11 +48,19 @@ def calculate_nrSeven(single_line):
 def calculate_nrEight(single_line):
     return fetch_stringsOfLength(single_line,7)
 ################################################
+###############Translate Basecombinations#######
+def translate_baseCombinations():
+    print("temp")
 ################################################
-##############Calculate Sixes###################
-
-
-
+##############Calculate Value###################
+##Calculate the value
+###Inputs:
+####X - CoF
+####Y - BoD
+####Z - EoG
+####A - A
+def calculate_value(value_to_check,value_x,value_y,value_z,value_a):
+    print("test")
 ################################################
 ################################################
 
