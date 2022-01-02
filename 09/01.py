@@ -28,6 +28,7 @@ for i in range(0,len(twoD_Array)):
 
 ###########################################
 ##check position x/y if adjacent
+##Direction -> 'up','down','left','right'
 #Return true/false
 def check_ifAdjacent(list_to_check,x_pos,y_pos,direction):
     if direction == 'up':
