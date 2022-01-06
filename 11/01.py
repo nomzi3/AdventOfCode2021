@@ -30,13 +30,13 @@ def load_inputListIntoTwoDArray(filename):
 ###Check if cords are OOB
 ####Return True/False
 def check_ifCordIsOOB(listToCheck,x_pos,y_pos):
-    print("x-pos:" + str(x_pos))
-    print("y-pos:" + str(y_pos))
+    #print("x-pos:" + str(x_pos))
+    #print("y-pos:" + str(y_pos))
     if y_pos < 0 or y_pos >= len(listToCheck):
-        print("out of range===>" + str(y_pos))
+        #print("out of range===>" + str(y_pos))
         return True
     elif x_pos < 0 or x_pos >= len(listToCheck[y_pos]):
-        print("out of range+++>" + str(x_pos))
+        #print("out of range+++>" + str(x_pos))
         return True
     else:
         return False
@@ -63,7 +63,7 @@ def generate_energyCordsToIncrease(listTocheck,x_pos,y_pos):
 ###increases daily energy in the list
 ####return updated list
 def increase_dailyEnergy(listToiterate):
-    temp_list = listToiterate[:]
+    temp_list = listToiterate.copy()
     #pprint.pprint(temp_list)
     for i in range(0,len(temp_list)):
         for j in range(0,len(temp_list[i])):
@@ -80,41 +80,83 @@ def create_baseList(listToCopy):
             #temp_list[i][j] = 0
         temp_list.append(part2_list)
     return temp_list
-##Check octi at limit
-#####WORK IN PROGRESS
-##If you find one, run generate energy cords
-####append it to the temp-list
-###set "still running" to True
-####set the "blown" octi to X
-#####continue
-###Once iteration done - append temp list to list - reset temp-list
-#####continue until no more "blown" octi appears and still running is set to False.
-
+#####takes octi list - iterates until no more energy overloads available
 ###return updated list.
 def check_octiAtLimit(listToIterate):
-    temp_list = create_baseList(listToIterate)
-    for i in range(0,len(listToIterate)):
-        for j in range(0,len(listToIterate[i])):
-            if listToIterate[i][j] > 9:
-                print("Found one")
+    blown_list = create_baseList(listToIterate)
+    #run_again = False
+    isRuning = True
+    ###Run until no more flashes occur this round
+    while isRuning:
+        temp_list = create_baseList(listToIterate)
+        
+        run_again = False
+        for y in range(0,len(listToIterate)):
+            for x in range(0,len(listToIterate[y])):
+                ###if energy lvl is above 9, but has yet to blow
+                if listToIterate[y][x] > 9 and blown_list[y][x] != 'X':
+                    #print("Found one")
+                    run_again = True
+                    energy_cords_to_run = generate_energyCordsToIncrease(listToIterate,x,y)
+                    ###Add energy to all surrounding octi
+                    for item in energy_cords_to_run:
+                        temp_list[item[1]][item[0]] += 1
+                    ##Keep track of blown octi with the blown_list
+                    blown_list[y][x] = 'X'
+        ###Add our energy from this round to the list
+        for y in range(0,len(temp_list)):
+            for x in range(0,len(temp_list[y])):
+                listToIterate[y][x] += temp_list[y][x]
+        ##if no active energy surges this round, exit and return
+        if run_again != True:
+            isRuning = False
+    ###For all blown octi, set their energy lvl to 0
+    for y in range(0,len(blown_list)):
+        for x in range(0,len(blown_list)):
+            if blown_list[y][x] == 'X':
+                listToIterate[y][x] = 0
+    return listToIterate
 ###run day changer - handles game logic for updating the Day
 #####return updated list
 def run_dayCanger(listToIterate):
-    print("###################")
-    pprint.pprint(listToIterate)
-    return_list = increase_dailyEnergy(listToIterate)
-    check_octiAtLimit(listToIterate)
-    pprint.pprint(return_list)
-    print("@@@@@@@@@@@@@@@@@@@")
-    return return_list
-
-#########################################################################
-twoD_Array = load_inputListIntoTwoDArray("input_01_test.txt")
-
-daysToRun = 1
-for i in range(0,daysToRun):
-    return_list = run_dayCanger(twoD_Array)
+    return_list = listToIterate.copy()
+    
+    #pprint.pprint(listToIterate)
+    return_list = increase_dailyEnergy(return_list)
     #pprint.pprint(return_list)
+    return_list = check_octiAtLimit(return_list)
+    #pprint.pprint(return_list)
+    
+    #return_list = []
+    return return_list
+##Counts the energy flashes of the round
+###Returns integer
+def count_energyFlashes(listToIterate):
+    total_flashes = 0
+    for y in range(0,len(listToIterate)):
+        for x in range(0,len(listToIterate)):
+            if listToIterate[y][x] == 0:
+                total_flashes += 1
+    return total_flashes
+#########################################################################
+twoD_Array = load_inputListIntoTwoDArray("input_01.txt")
+total_flashes = 0
+daysToRun = 100
+print("Prior to any steps")
+pprint.pprint(twoD_Array)
+##Basic loop - runs for dayToRun
+for i in range(1,daysToRun+1):
+    print("###################")
+    return_list = run_dayCanger(twoD_Array)
+    print("After step==>" + str(i))
+    pprint.pprint(return_list)
+    flashes_this_round = count_energyFlashes(return_list)
+    print("Flashes this round===>" + str(flashes_this_round))
+    total_flashes += flashes_this_round
+    print("@@@@@@@@@@@@@@@@@@@")
+    twoD_Array = return_list.copy()
+##This is the result we're looking for
+print("Total flashes for run===>" + str(total_flashes))
 
 
 #temp_list = create_baseList(twoD_Array)
