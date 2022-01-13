@@ -59,16 +59,20 @@ def write_line_to_file(file_to_append,line_to_write):
 # until the buffer is empty.
 def processWriteBuffer(filename,buffer_to_write):
     print("printing to file")
+    write_line_to_file(filename,buffer_to_write)
+    """
     items_left_to_print = True
     buffer_left_to_print = len(buffer_to_write)
     start_point = 0
     while items_left_to_print:
-        if(buffer_left_to_print < 50):
+        end_point = start_point + 50
+        if(end_point > buffer_left_to_print):
             write_line_to_file(filename,buffer_to_write[start_point:buffer_left_to_print])
             items_left_to_print = False
         else:
-            write_line_to_file(filename,buffer_to_write[start_point:buffer_to_write])
-            start_point += buffer_to_write - 1
+            write_line_to_file(filename,buffer_to_write[start_point:end_point])
+            start_point += 49
+    """
     
 
 ##if end of file - print everything
