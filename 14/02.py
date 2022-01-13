@@ -44,20 +44,32 @@ def load_inputIntoLists(filename):
         f.write(polym)
         #f.write("\n")
     return polym, translation_dict
+#Fetches the Insert-value for a 2-char combination
+###Returns the insert-value
 def get_insertValue(letters_to_match,rule_dict):
     return rule_dict.get(letters_to_match)
+##Appends a line to a file - adding a \n for linebreak
 def write_line_to_file(file_to_append,line_to_write):
     with open(file_to_append, "a") as f:
         line_to_write += "\n"
         f.write(line_to_write)
+
+###process the write buffer
+##makes sure the output is written in a correct manner - 
+# until the buffer is empty.
 def processWriteBuffer(filename,buffer_to_write):
     print("printing to file")
-    #items_left_to_print = True
-    #while items_left_to_print:
-
-    ###stupid way of doing it, but letting it work like this for now.
-    write_line_to_file(filename,buffer_to_write)
-
+    items_left_to_print = True
+    buffer_left_to_print = len(buffer_to_write)
+    start_point = 0
+    while items_left_to_print:
+        if(buffer_left_to_print < 50):
+            write_line_to_file(filename,buffer_to_write[start_point:buffer_left_to_print])
+            items_left_to_print = False
+        else:
+            write_line_to_file(filename,buffer_to_write[start_point:buffer_to_write])
+            start_point += buffer_to_write - 1
+    
 
 ##if end of file - print everything
 def processReadBuffer(filename_to_write,read_buffer_to_process,rule_dict,endOfFile):
