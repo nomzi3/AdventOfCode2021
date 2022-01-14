@@ -1,10 +1,23 @@
 ##Part 2 of the puzzle
 ####won't be possible to solve it like we did with part1 - as it fills up the ram instantly.
 
-###below version uses files to handle the rounds
-#Currently will not function as we want -> Already at step 17 it takes 9 min to run.
-#and step 18 took longer than 20 min before I cancelled.
+#some experimentation done
+"""
+So far - one idea to solve it is to split the polymer into smaller working pieces
+and perhaps setup some threading so we can work on multiple files at the same time?
+
+Another option is to split our v1 for part1, and work in ram for as long as possible
+    and once we reach a certain length in ram we dump to file
+        ->we keep running with the primary part in ram until we reach iteration 40, at which
+            point we continue with the next file we dumped to?
+
+    rather than saving the info once done, we calculate the total value and save that
+
+"""
 ###############################################################################
+
+
+
 ##Load primary input into string + dict
 ###Dict for handling the translation-rules
 ###String for holding the Polymer
@@ -91,6 +104,7 @@ def processReadBuffer(filename_to_write,read_buffer_to_process,rule_dict,endOfFi
 #Print to terminal
 def process_file_results(filename):
     result_dict = {}
+    print("Opening===>" + filename)
     with open(filename, 'r') as f:
         end_of_file = False
         while end_of_file != True:
@@ -161,12 +175,47 @@ def processFile(poly_to_mutate,rule_dict,iterations_to_run):
         file_to_process = poly_to_mutate + "-" + str(name_counter) + base_ending
         process_file_results(file_to_process)
 
+##Split polym into pieces
+###Create a start-point for the main-program to continue from
+##Return list with polym-pieces
+def split_polym_into_pieces(poly_string):
+    print("splitting")
+    #poly_split = list(poly_string)
+    return_list = []
+    #temp_word = ""
+    total_length = len(poly_string)
+    print(total_length)
+    piece_length = int(total_length / 7)
+    still_running = True
+    start_number = 0
+    end_number = 0
+    while still_running:
+        end_number = start_number + piece_length + 1
+        print("start:",start_number)
+        print("end:",end_number)
+        temp_split = poly_string[start_number:end_number]
+        return_list.append(temp_split)
+        start_number += piece_length
+        if start_number >= total_length:
+            still_running = False
+    print(return_list)
+
+    for polym in return_list:
+        log_file = polym + "-0.log"
+        with open(log_file, 'w') as f:
+            f.write(polym)
+    return return_list
+    #log_file = polym + "-0.log"
+    #with open(log_file, 'w') as f:
+        #f.write(polym)
 
 polymer_string, translation_rules = load_inputIntoLists("02_input.txt")
 
 print(polymer_string)
-print(translation_rules)
+polym_list = split_polym_into_pieces(polymer_string)
 
-processFile(polymer_string,translation_rules,10)
+processFile(polym_list[0],translation_rules,20)
 
-
+#for i in range(1,14):
+ #   file_to_process = polymer_string + "-" + str(i) + ".log"
+  #  process_file_results(file_to_process)
