@@ -81,7 +81,8 @@ def running_function(poly_string,trans_rules,iterationsToRun):
         insert_results = insert_calculation(polymer_match_list,trans_rules)
         #print(insert_results)
         temp_poly_string = get_finalPolymer(temp_poly_string,insert_results)
-        print("After step " + str(i) + ": " + temp_poly_string)
+        #print("After step " + str(i) + ": " + temp_poly_string)
+        print("Round==>" + str(i))
         print("Length: " + str(len(temp_poly_string)))
     counted_letters = Counter(temp_poly_string)
     print(counted_letters)
@@ -92,12 +93,12 @@ def running_function(poly_string,trans_rules,iterationsToRun):
     our_answer = max_value - min_value
     print("Answer to our question===>" + str(our_answer))
 
-polymer_string, translation_rules = load_inputIntoLists("01_input.txt")
+polymer_string, translation_rules = load_inputIntoLists("01_input_test.txt")
 
 print(polymer_string)
 print(translation_rules)
 
-running_function(polymer_string,translation_rules,10)
+running_function(polymer_string,translation_rules,20)
 ##################################
 """
 polymer_match_list = split_polymerIntoWorkingSizes(polymer_string)
